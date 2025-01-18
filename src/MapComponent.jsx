@@ -1,16 +1,10 @@
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup,Polyline } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "./App.css";
 import L from "leaflet";
-import markerIcon from "leaflet/dist/images/marker-icon.png";
-import markerShadow from "leaflet/dist/images/marker-shadow.png";
-import coordinates from "./assets/directions.json";
 import marker from "./assets/map-marker-svgrepo-com.svg";
 
-// L.Icon.Default.mergeOptions({
-//   iconUrl: markerIcon,
-//   shadowUrl: markerShadow,
-// });
+const redOptions = { color: "red" };
 
 const myIcon = new L.Icon({
   iconUrl: marker,
@@ -18,6 +12,46 @@ const myIcon = new L.Icon({
   popupAnchor: [-0, -0],
   iconSize: [32, 45],
 });
+
+const multiPolyline = [
+  [
+    [27.6864, 86.7294], // Lukla to Phakding
+    [27.7403, 86.7138]
+  ],
+  [
+    [27.7403, 86.7138], // Phakding to Namche Bazaar
+    [27.8058, 86.7149]
+  ],
+  [
+    [27.8058, 86.7149], // Namche Bazaar to Tengboche
+    [27.8370, 86.7637]
+  ],
+  [
+    [27.8370, 86.7637], // Tengboche to Dingboche
+    [27.8917, 86.8252]
+  ],
+  [
+    [27.8917, 86.8252], // Dingboche to Lobuche
+    [27.9468, 86.8103]
+  ],
+  [
+    [27.9468, 86.8103], // Lobuche to Gorak Shep
+    [28.0037, 86.8528]
+  ],
+  [
+    [28.0037, 86.8528], // Gorak Shep to Everest Base Camp (EBC)
+    [28.0043, 86.8520]
+  ],
+  [
+    [28.0043, 86.8520], // Everest Base Camp (EBC) to Kala Patthar
+    [27.9997, 86.8285]
+  ],
+  [
+    [27.9997, 86.8285], // Kala Patthar to Pheriche
+    [27.8853, 86.8127]
+  ]
+];
+
 
 const markers = {
   routes: [
@@ -100,27 +134,30 @@ const MapComponent = () => {
   return (
     <MapContainer
       className="map-container"
-      center={[27.6864, 86.7294]}
-      zoom={10}
+      center={[27.6864, 86.7294]} // Centered near Lukla
+      zoom={10} // Suitable zoom level for trekking routes
       scrollWheelZoom={true}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-
       {markers.routes.map((route, index) => (
-        <Marker 
-        key={index}
-        position={markers.routes[0].coordinates.from} 
-        icon={myIcon}>
+        <Marker
+          key={index} // Ensure a unique key for each marker
+          position={route.coordinates.from} // Marker position for "from" coordinates
+          icon={myIcon} // Custom marker icon
+        >
           <Popup>
-            {route.from}
+            <strong>From:</strong> {route.from}
             <br />
-            {route.coordinates.from.join(", ")}
+            <strong>To:</strong> {route.to}
+            <br />
+            <strong>Coordinates:</strong> {route.coordinates.from.join(", ")}
           </Popup>
         </Marker>
       ))}
+      <Polyline pathOptions={redOptions} positions={multiPolyline} />
     </MapContainer>
   );
 };
